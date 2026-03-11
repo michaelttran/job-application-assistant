@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ✦ Job Application Assistant
 
 A Chrome extension that auto-fills job application forms and generates AI-powered answers to open-ended questions using Claude.
@@ -105,4 +104,3 @@ job-application-assistant/
 ```
 =======
 # job-application-assistant
->>>>>>> f843b61a0464d82ce1c748deac5502e24e02e04f
