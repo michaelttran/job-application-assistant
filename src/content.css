@@ -1,0 +1,5 @@
+/* content.css — Minimal injected styles for field highlights */
+
+[data-jaa-highlighted] {
+  transition: outline 0.2s ease !important;
+}
