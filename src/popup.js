@@ -54,13 +54,17 @@ document.getElementById('exportProfile').addEventListener('click', () => {
 document.getElementById('importProfile').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
+  if (file.size > 100_000) { showStatus('File too large (max 100 KB)', 'warning'); e.target.value = ''; return; }
   const reader = new FileReader();
   reader.onload = (ev) => {
     try {
       const data = JSON.parse(ev.target.result);
-      // Only import known profile fields — ignore anything else in the file
+      if (typeof data !== 'object' || Array.isArray(data) || data === null) throw new Error('bad shape');
+      // Only import known profile fields as strings — ignore everything else
       const filtered = {};
-      PROFILE_FIELDS.forEach(f => { if (data[f] !== undefined) filtered[f] = data[f]; });
+      PROFILE_FIELDS.forEach(f => {
+        if (typeof data[f] === 'string') filtered[f] = data[f].slice(0, 10_000);
+      });
       chrome.storage.local.set(filtered, () => {
         // Populate all fields in the UI
         PROFILE_FIELDS.forEach(f => {

@@ -11,7 +11,7 @@
     "webNavigation"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
+    "extension_pages": "default-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://api.anthropic.com"
   },
   "host_permissions": [
     "https://*.linkedin.com/*",
