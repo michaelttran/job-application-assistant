@@ -8,9 +8,11 @@
     "activeTab",
     "scripting",
     "sidePanel",
-    "unlimitedStorage",
     "webNavigation"
   ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://api.anthropic.com"
+  },
   "host_permissions": [
     "https://*.linkedin.com/*",
     "https://*.myworkdayjobs.com/*",

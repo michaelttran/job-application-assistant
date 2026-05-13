@@ -45,6 +45,14 @@
     { patterns: ['age range', 'age group', 'what is your age', 'current age'],                          field: 'diversityAge' },
   ];
 
+  const PROFILE_KEYS = [
+    'fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'portfolio',
+    'currentTitle', 'yearsExp', 'resumeSummary', 'careerGoals',
+    'diversityGender', 'diversityRace', 'diversityVeteran', 'diversityDisability',
+    'diversityHispanic', 'diversityTransgender', 'diversitySexualOrientation',
+    'diversityCommunities', 'diversityAge',
+  ];
+
   const IGNORE_PATTERNS = [
     'how did you hear', 'how did you find', 'referred by', 'referral',
     'cover letter', 'additional information', 'anything else', 'tell us more',
@@ -545,7 +553,10 @@
     });
   }
   function injectAnswer(fieldId, answer) {
-    const el = document.getElementById(fieldId) || document.querySelector(`[name="${fieldId}"]`) || document.querySelector(`[data-jaa-id="${fieldId}"]`);
+    const escaped = CSS.escape(fieldId);
+    const el = document.getElementById(fieldId)
+      || document.querySelector(`[name="${escaped}"]`)
+      || document.querySelector(`[data-jaa-id="${escaped}"]`);
     if (!el) return false;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
@@ -559,6 +570,7 @@
 
   // ── Message listener ───────────────────────────────────────────────────────
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (sender.id !== chrome.runtime.id) return;
     switch (msg.action) {
       case 'getPageInfo':      sendResponse(extractPageInfo()); break;
       case 'detectQuestions':  sendResponse({ questions: detectQuestions() }); break;
@@ -566,7 +578,7 @@
       case 'clearHighlight':   clearHighlights(); sendResponse({ ok: true }); break;
       case 'injectAnswer':     sendResponse({ success: injectAnswer(msg.fieldId, msg.answer) }); break;
       case 'autoFill':
-        chrome.storage.local.get(null, (profile) => {
+        chrome.storage.local.get(PROFILE_KEYS, (profile) => {
           waitForReactHydration(() => {
             const filled = autoFillForm(profile);
             sendResponse({ message: `Filled ${filled} field${filled !== 1 ? 's' : ''}` });

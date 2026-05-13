@@ -5,7 +5,16 @@ let settings = {};
 let questions = [];
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-chrome.storage.local.get(null, (data) => {
+const STORAGE_KEYS = [
+  'fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'portfolio',
+  'currentTitle', 'yearsExp', 'resumeSummary', 'careerGoals',
+  'diversityGender', 'diversityRace', 'diversityVeteran', 'diversityDisability',
+  'diversityHispanic', 'diversityTransgender', 'diversitySexualOrientation',
+  'diversityCommunities', 'diversityAge',
+  'apiKey', 'responseStyle', 'answerLength',
+];
+
+chrome.storage.local.get(STORAGE_KEYS, (data) => {
   profile = data;
   settings = data;
 });
@@ -146,6 +155,9 @@ async function generateAnswer(question, type, textarea, genBtn, injectBtn, copyB
     showToast('Add your API key in Settings first', 'error');
     return;
   }
+  // Security note: the API key is stored in chrome.storage.local (unencrypted) and sent
+  // directly from the browser. Use a key scoped to the minimum required permissions and
+  // rotate it if you suspect it has been exposed.
 
   const company = document.getElementById('jobCompany').value.trim();
   const jobTitle = document.getElementById('jobTitle').value.trim();
@@ -182,7 +194,8 @@ async function generateAnswer(question, type, textarea, genBtn, injectBtn, copyB
     }
 
     const data = await response.json();
-    const answer = data.content?.[0]?.text || '';
+    // Strip C0/C1 control characters (except tab, newline, carriage return) before use
+    const answer = (data.content?.[0]?.text || '').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]/g, '');
 
     textarea.value = answer;
     textarea.placeholder = '';
@@ -267,7 +280,7 @@ function getTypeBadge(type) {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 }
 
 function showToast(msg, type = '') {
