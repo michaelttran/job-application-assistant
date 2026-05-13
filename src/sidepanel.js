@@ -146,6 +146,9 @@ async function generateAnswer(question, type, textarea, genBtn, injectBtn, copyB
     showToast('Add your API key in Settings first', 'error');
     return;
   }
+  // Security note: the API key is stored in chrome.storage.local (unencrypted) and sent
+  // directly from the browser. Use a key scoped to the minimum required permissions and
+  // rotate it if you suspect it has been exposed.
 
   const company = document.getElementById('jobCompany').value.trim();
   const jobTitle = document.getElementById('jobTitle').value.trim();
