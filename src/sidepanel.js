@@ -246,14 +246,22 @@ ${profileSummary || 'No profile saved — give general but strong answers.'}
 WRITING STYLE: ${styleGuide}
 RESPONSE LENGTH: ${lengthGuide}
 
+BEFORE WRITING, reason through the following silently:
+1. What is this question actually trying to assess about the candidate? (motivation, problem-solving, cultural fit, technical depth, etc.)
+2. Which specific experiences or traits from the candidate's profile are most relevant — and which single example or detail is most compelling?
+3. What would a thoughtful, self-aware person naturally emphasize here — not a recruiter, but a real engineer reflecting on their work?
+4. How can the answer feel like a direct, honest response rather than a rehearsed answer? What natural language, transitions, or framing would a real person use?
+
 RULES:
 - Write in first person as the candidate
 - Be specific and authentic — draw on real details from the profile when available
 - Avoid generic clichés like "I'm a team player" or "I'm passionate about..."
+- Vary sentence length and structure — real people don't write in uniform rhythm
+- Use natural connective language ("what I found interesting was...", "looking back...", "that's actually where I learned...")
 - If company/role info is provided, tailor the answer to it specifically
 - Do NOT include any preamble like "Here's an answer:" — just write the answer directly
 - Do NOT use bullet points unless the question explicitly asks for a list
-- Make it sound human and thoughtful, not like AI filler`;
+- Do NOT output your reasoning — only output the final answer`;
 }
 
 function buildUserPrompt(question, company, jobTitle, jobNotes) {
