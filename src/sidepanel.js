@@ -178,11 +178,17 @@ async function generateAnswer(question, type, textarea, genBtn, injectBtn, copyB
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'server-side-fallback-2026-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 600,
+        model: 'claude-fable-5',
+        // Thinking is always on for this model and counts against max_tokens,
+        // so leave headroom beyond the visible answer length
+        max_tokens: 4000,
+        output_config: { effort: 'low' },
+        // If safety classifiers decline a request, re-serve it on Opus in the same call
+        fallbacks: [{ model: 'claude-opus-4-8' }],
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }]
       })
@@ -194,8 +200,15 @@ async function generateAnswer(question, type, textarea, genBtn, injectBtn, copyB
     }
 
     const data = await response.json();
+
+    if (data.stop_reason === 'refusal') {
+      throw new Error('The model declined to answer this question. Try rephrasing it.');
+    }
+
+    // The response may lead with a thinking block — take the text block, not content[0]
+    const textBlock = (data.content || []).find(b => b.type === 'text');
     // Strip C0/C1 control characters (except tab, newline, carriage return) before use
-    const answer = (data.content?.[0]?.text || '').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]/g, '');
+    const answer = (textBlock?.text || '').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]/g, '');
 
     textarea.value = answer;
     textarea.placeholder = '';
@@ -274,7 +287,12 @@ Write in a natural, human voice. Follow these rules:
 - It's fine to start a sentence with "And" or "But."
 - Don't over-explain or restate the question before answering it. Get to the point.
 - Avoid excessive enthusiasm, exclamation points, or corporate-friendly tone unless it actually fits the context.
-- Prioritize clarity and specificity over sounding impressive. Concrete details read as more human than vague generalities.`;
+- Prioritize clarity and specificity over sounding impressive. Concrete details read as more human than vague generalities.
+- Avoid overused buzzwords: "journey," "passion," "dive into," "robust," "seamless," "cutting-edge," "game-changer," "synergy."
+- Never use the "not just X, it's Y" contrast construction ("This isn't just a challenge, it's an opportunity"). Same for "not only... but also."
+- Don't end with a summarizing wrap-up like "Overall, this experience taught me..." Just stop when the point is made.
+- Vary how sentences open. Don't start every sentence with "I."
+- Prefer concrete numbers over vague qualifiers: "a team of four" instead of "a small team," "three years" instead of "several years" (when the profile provides them — never invent numbers).`;
 }
 
 function buildUserPrompt(question, company, jobTitle, jobNotes) {
