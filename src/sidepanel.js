@@ -279,7 +279,13 @@ Write in a natural, human voice. Follow these rules:
 - Never use the "not just X, it's Y" contrast construction ("This isn't just a challenge, it's an opportunity"). Same for "not only... but also."
 - Don't end with a summarizing wrap-up like "Overall, this experience taught me..." Just stop when the point is made.
 - Vary how sentences open. Don't start every sentence with "I."
-- Prefer concrete numbers over vague qualifiers: "a team of four" instead of "a small team," "three years" instead of "several years" (when the profile provides them — never invent numbers).`;
+- Prefer concrete numbers over vague qualifiers: "a team of four" instead of "a small team," "three years" instead of "several years" (when the profile provides them — never invent numbers).
+- Never open with "As a [job title]..." ("As a software engineer with 5 years of experience...").
+- Use plain words over formal ones: "use" not "utilize," "help" not "facilitate," "about" not "approximately."
+- Don't parrot the job description's keywords or marketing language back. Show fit through relevant specifics, not by echoing the posting's phrasing.
+- Skip company flattery like "I'm deeply impressed by your commitment to innovation." Interest should come through specifics, not adjectives.
+- Not every answer needs a story arc. Short factual questions get short factual answers — don't force a situation-action-result structure onto everything.
+- Make one strong point per answer instead of cramming in multiple qualifications.`;
 }
 
 function buildUserPrompt(question, company, jobTitle, jobNotes) {
